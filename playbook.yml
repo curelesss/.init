@@ -1,0 +1,261 @@
+- name: Arch Init Playbook
+  gather_facts: no
+  hosts: localhost
+  vars:
+      source_key: "ssh/id_rsa"
+      dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa"
+
+  tasks:
+    
+    - name: 1] Check Mirror List Backup File 
+      stat:
+        path: /etc/pacman.d/mirrorlist.backup
+      register: mirrorlist_backup
+      tags:
+        - mirrorlist
+
+    - name: 1] Backup Mirror list 
+      become: yes
+      copy:
+        src: /etc/pacman.d/mirrorlist
+        dest: /etc/pacman.d/mirrorlist.backup
+      when: not mirrorlist_backup.stat.exists
+      tags:
+        - mirrorlist
+
+    - name: 1] Read the mirrorlist file
+      become: yes
+      ansible.builtin.slurp:
+        src: /etc/pacman.d/mirrorlist
+      register: mirrorlist
+      tags:
+        - mirrorlist
+
+    - name: 1] Define required mirrorlist content
+      become: yes
+      ansible.builtin.set_fact:
+        required_lines:
+          - 'Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch'
+          - 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch'
+          - 'Server = http://mirrors.163.com/archlinux/$repo/os/$arch'
+          - 'Server = http://mirrors.aliyun.com/archlinux/$repo/os/$arch'
+      tags:
+        - mirrorlist
+
+    - name: 1] Check if required lines are present
+      become: yes
+      ansible.builtin.set_fact:
+        missing_lines: "{{ required_lines | difference(mirrorlist.content | b64decode | split('\n')) }}"
+      tags:
+        - mirrorlist
+
+    - name: 1] Update mirrorlist if needed
+      become: yes
+      ansible.builtin.copy:
+        dest: /etc/pacman.d/mirrorlist
+        content: |
+          {% for line in required_lines %}
+          {{ line }}
+          {% endfor %}
+      when: missing_lines | length > 0
+      tags:
+        - mirrorlist
+
+    - name: 2] Update pacman.conf - Color
+      become: yes
+      replace:
+        path: /etc/pacman.conf
+        regexp: '^#Color'
+        replace: 'Color'
+      tags:
+        - pacman
+
+    - name: 2] Update pacman.conf - ParallelDownload
+      become: yes
+      replace:
+        path: /etc/pacman.conf
+        regexp: '^#ParallelDownloads = 5'
+        replace: 'ParallelDownloads = 5'
+      tags:
+        - pacman
+
+    - name: 2] Update pacman.conf - VerbosePkgLists
+      become: yes
+      replace:
+        path: /etc/pacman.conf
+        regexp: '^#VerbosePkgLists'
+        replace: 'VerbosePkgLists'
+      tags:
+        - pacman
+
+    - name: 2] Update pacman.conf - ILoveCandy
+      become: yes
+      lineinfile:
+        path: /etc/pacman.conf
+        line: "ILoveCandy"
+        insertafter: "# Misc options"
+        state: present
+      tags:
+        - pacman
+
+    - name: 2] Update pamcam.conf - multilib
+      become: yes
+      replace:
+        path: /etc/pacman.conf
+        regexp: "^#\\[multilib\\]\\n#Include = /etc/pacman.d/mirrorlist"
+        replace: "[multilib]\nInclude = /etc/pacman.d/mirrorlist"
+      tags:
+        - pacman
+
+    - name: 2] Pacman Update & Upgrade
+      become: yes
+      pacman:
+        update_cache: yes
+        upgrade: yes
+      tags:
+        - pacman
+
+    - name: 3] git user.email
+      git_config:
+        name: user.email
+        scope: global
+        value: "curelesss@gmail.com"
+      tags:
+        - git
+        - github
+
+    - name: 3] git user.name
+      git_config:
+        name: user.name
+        scope: global
+        value: "curelesss"
+      tags:
+        - git
+        - github
+
+    - name: 3] Ensure .ssh directory exists
+      file:
+        dest: "{{ dest_key | dirname }}"
+        mode: 0700
+        state: directory
+      tags:
+        - ssh
+        - github
+
+    - name: 3] Install ssh key
+      copy:
+        src: "{{ source_key }}"
+        dest: "{{ dest_key }}"
+        mode: 0600
+      tags:
+        - ssh
+        - github
+
+    - name: 3] Install git config
+      ansible.builtin.command:
+        cmd: cp ssh/config "{{ lookup('env', 'HOME') }}/.ssh/"
+      tags:
+        - ssh
+        - github
+
+    - name: 3] Install openssh
+      become: yes
+      pacman:
+        name: openssh
+        state: present
+      tags:
+        - ssh
+
+    - name: 4] Set Grub to Output System Loading Info
+      become: yes
+      ansible.builtin.replace:
+        path: /etc/default/grub
+        regexp: '^(\s*)GRUB_CMDLINE_LINUX_DEFAULT=.*$'
+        replace: '\1GRUB_CMDLINE_LINUX_DEFAULT=""'
+      tags:
+        - grub
+
+    - name: 4] Update GRUB configuration
+      become: yes
+      ansible.builtin.command:
+        cmd: grub-mkconfig -o /boot/grub/grub.cfg
+      tags:
+        - grub
+          
+    - name: 5] Check Yay directory
+      stat:
+        path: ~/yay
+      register: yay_folder
+      tags:
+        - yay  
+
+    - name: 5] Clone Yay
+      git:
+        repo: https://aur.archlinux.org/yay-bin.git
+        dest: "~/yay"
+      when: yay_folder.stat.exists == False
+      tags:
+        - yay
+      
+      # dependency for building yay
+    - name: 5] Install debugedit
+      become: yes
+      pacman:
+        name: debugedit
+        state: present
+      tags:
+        - yay
+
+    - name: 5] Build and Install Yay
+      command:
+        chdir: "~/yay"
+        cmd: "makepkg -sfi --noconfirm"
+        creates: /usr/bin/yay
+      tags:
+        - yay
+
+    - name: 5] Install collection community.network
+      community.general.ansible_galaxy_install:
+        type: collection
+        name: kewlfft.aur
+      tags:
+        - yay
+
+    - name: 5] Create the `aur_builder` user
+      become: yes
+      ansible.builtin.user:
+        name: aur_builder
+        create_home: yes
+        group: wheel
+      tags:
+        - yay
+        - yay.ansible
+
+    - name: 5] Allow the `aur_builder` user to run `sudo pacman` without a password
+      become: yes
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers.d/11-install-aur_builder
+        line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+        create: yes
+        mode: 0644
+        validate: 'visudo -cf %s'
+      tags:
+        - yay
+        - yay.ansible
+
+    # - name: 6] 目录检查 [Check .setup directory
+    #   stat:
+    #     path: ~/.setup
+    #   register: setup_folder
+    #   tags:
+    #     - clone
+
+    - name: 6] [Clone .setup repository
+      git:
+        repo: git@github.com:curelesss/.dotfiles.git
+        dest: "~/.dotfiles"
+        update: yes
+        force: yes
+      # when: setup_folder.stat.exists == False
+      tags:
+        - clone
