@@ -57,4 +57,5 @@
         state: present
       tags:
         - ssh
+        - github
 
