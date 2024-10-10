@@ -3,7 +3,7 @@
 mv termux/ansible.cfg ./
 
 termux-setup-storage
-sleep 30s
+sleep 5s
 termux-change-repo
 
 pkg update
@@ -17,6 +17,7 @@ apt install python-cryptography
 pip install ansible
 
 ansible-playbook playbook.yml --ask-vault-pass --tags=github
+ansible-playbook playbook.yml --ask-vault-pass --tags=termux
 
 git remote set-url origin git@github.com:curelesss/.init.git
 

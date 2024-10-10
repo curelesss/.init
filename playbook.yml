@@ -57,5 +57,11 @@
         state: present
       tags:
         - ssh
-        - github
+
+    - name: 3] Install openssh - termux
+      apt:
+        name: openssh
+        state: present
+      tags:
+        - termux
 
