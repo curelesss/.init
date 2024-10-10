@@ -16,8 +16,7 @@ export CARGO_BUILD_TARGET=aarch64-linux-android
 apt install python-cryptography -y
 pip install ansible
 
-ansible-playbook playbook.yml --ask-vault-pass --tags=github
-ansible-playbook playbook.yml --tags=termux
+ansible-playbook playbook.yml --ask-vault-pass --tags=termux
 
 git remote set-url origin git@github.com:curelesss/.init.git
 
