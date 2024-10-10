@@ -9,15 +9,15 @@ termux-change-repo
 pkg update
 pkg upgrade
 
-pkg install python
-pip install wheel
-pkg install rust
+pkg install python -y
+pip install wheel -y
+pkg install rust -y
 export CARGO_BUILD_TARGET=aarch64-linux-android
-apt install python-cryptography
-pip install ansible
+apt install python-cryptography -y
+pip install ansible -y
 
 ansible-playbook playbook.yml --ask-vault-pass --tags=github
-ansible-playbook playbook.yml --ask-vault-pass --tags=termux
+ansible-playbook playbook.yml --tags=termux
 
 git remote set-url origin git@github.com:curelesss/.init.git
 

@@ -59,9 +59,7 @@
         - ssh
 
     - name: 3] Install openssh - termux
-      apt:
-        name: openssh
-        state: present
+      command: pkg install openssh -y
       tags:
         - termux
 
