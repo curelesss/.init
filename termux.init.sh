@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mv termux/termux.init.sh ./
+mv termux/ansible.cfg ./
 
 termux-setup-storage
 sleep 30s
@@ -22,4 +22,4 @@ git remote set-url origin git@github.com:curelesss/.init.git
 
 ssh -T git@github.com
 
-mv termux.init.sh termux/
+mv ansible.cfg termux/
