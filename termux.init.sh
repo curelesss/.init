@@ -10,11 +10,11 @@ pkg update
 pkg upgrade
 
 pkg install python -y
-pip install wheel -y
+pip install wheel
 pkg install rust -y
 export CARGO_BUILD_TARGET=aarch64-linux-android
 apt install python-cryptography -y
-pip install ansible -y
+pip install ansible
 
 ansible-playbook playbook.yml --ask-vault-pass --tags=github
 ansible-playbook playbook.yml --tags=termux
