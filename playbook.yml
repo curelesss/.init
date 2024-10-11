@@ -69,3 +69,25 @@
       tags:
         - termux
 
+    - name: 4] Install GNU Stow
+      become: yes
+      pacman:
+        name: stow
+        state: present
+      tags:
+        - dotfile
+
+    - name: 4] check dotfile directory
+      stat:
+        path: "~/dotfiles"
+      register: dotfiles_dir
+      tags:
+        - dotfile
+
+    - name: 4] clone dotfiles
+      git:
+        repo: "git@github.com:curelesss/dotfiles.git"
+        dest: "~/dotfiles"
+      when: not dotfiles_dir.stat.exists
+      tags:
+        - dotfile
