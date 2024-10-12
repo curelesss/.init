@@ -76,7 +76,6 @@
         state: present
       tags:
         - dotfile
-        - termux
 
     - name: 4] check dotfile directory
       stat:
