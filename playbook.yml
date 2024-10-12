@@ -76,6 +76,7 @@
         state: present
       tags:
         - dotfile
+        - termux
 
     - name: 4] check dotfile directory
       stat:
@@ -83,6 +84,7 @@
       register: dotfiles_dir
       tags:
         - dotfile
+        - termux
 
     - name: 4] clone dotfiles
       git:
@@ -91,3 +93,4 @@
       when: not dotfiles_dir.stat.exists
       tags:
         - dotfile
+        - termux
