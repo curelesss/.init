@@ -79,8 +79,6 @@
       pacman:
         name: stow
         state: present
-      tags:
-        - dotfile
 
     - name: 4] check dotfile directory
       stat:
