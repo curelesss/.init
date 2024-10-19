@@ -16,6 +16,7 @@
         - git
         - github
         - termux
+        - ubuntu
 
     - name: 3] git user.name
       git_config:
@@ -26,6 +27,7 @@
         - git
         - github
         - termux
+        - ubuntu
 
     - name: 3] Ensure .ssh directory exists
       file:
@@ -36,6 +38,7 @@
         - ssh
         - github
         - termux
+        - ubuntu
 
     - name: 3] Install ssh key
       copy:
@@ -46,6 +49,7 @@
         - ssh
         - github
         - termux
+        - ubuntu
 
     - name: 3] Install git config
       ansible.builtin.command:
@@ -54,6 +58,7 @@
         - ssh
         - github
         - termux
+        - ubuntu
 
     - name: 3] Install openssh
       become: yes

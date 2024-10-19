@@ -34,7 +34,7 @@ echo -*********************************-
 echo -** Run Ansible Init Play-book  **-
 echo -*********************************-
 
-ansible-playbook playbook.yml --ask-vault-pass
+ansible-playbook playbook.yml --ask-vault-pass --tags=ubuntu
 
 echo -*********************************-
 echo -** Testing Github Connection   **-
