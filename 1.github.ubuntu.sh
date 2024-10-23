@@ -1,9 +1,3 @@
-echo -*********************************-
-echo -** Update Ubuntu Mirror List   **-
-echo -*********************************-
-
-sudo rm -f /etc/apt/sources.list
-sudo cp ./sources.list /etc/apt/
 
 echo -*********************************-
 echo -** Add Ansible Repository      **-

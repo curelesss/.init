@@ -96,3 +96,18 @@
       tags:
         - dotfile
         - termux
+
+    - name: 5] check .init.ubuntu directory
+      stat:
+        path: "~/.init.ubuntu"
+      register: init_ubuntu_dir
+      tags:
+        - .init.ubuntu
+
+    - name: 5] clone dotfiles
+      git:
+        repo: "git@github.com:curelesss/.init.ubuntu.git"
+        dest: "~/.init.ubuntu"
+      when: not init_ubuntu_dir.stat.exists
+      tags:
+        - .init.ubuntu

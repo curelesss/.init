@@ -1,1 +1,1 @@
-ansible-playbook playbook.yml --become-password-file=sudo --tags=dotfile
+ansible-playbook playbook.yml --tags=dotfile
