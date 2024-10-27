@@ -1,3 +1,3 @@
-Personal Initial Repo
+personal initial repo
 
 
