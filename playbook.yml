@@ -104,7 +104,7 @@
       tags:
         - .init.ubuntu
 
-    - name: 5] clone dotfiles
+    - name: 5] clone .init.ubuntu
       git:
         repo: "git@github.com:curelesss/.init.ubuntu.git"
         dest: "~/.init.ubuntu"
