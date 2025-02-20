@@ -18,6 +18,7 @@
         - termux
         - ubuntu
         - macos
+        - arch
 
     - name: 3] git user.name
       git_config:
@@ -30,6 +31,7 @@
         - termux
         - ubuntu
         - macos
+        - arch
 
     - name: 3] Ensure .ssh directory exists
       file:
@@ -42,6 +44,7 @@
         - termux
         - ubuntu
         - macos
+        - arch
 
     - name: 3] Install ssh key
       copy:
@@ -54,6 +57,7 @@
         - termux
         - ubuntu
         - macos
+        - arch
 
     - name: 3] Install git config
       ansible.builtin.command:
@@ -64,6 +68,7 @@
         - termux
         - ubuntu
         - macos
+        - arch
 
     - name: 3] Install openssh
       become: yes
@@ -73,6 +78,7 @@
       tags:
         - ssh
         - github
+        - arch
 
     - name: 3] Install openssh - termux
       command: pkg install openssh -y
@@ -90,7 +96,7 @@
         path: "~/dotfiles"
       register: dotfiles_dir
       tags:
-        - dotfile
+        - dotfiles
         - termux
 
     - name: 4] clone dotfiles
@@ -99,7 +105,7 @@
         dest: "~/dotfiles"
       when: not dotfiles_dir.stat.exists
       tags:
-        - dotfile
+        - dotfiles
         - termux
 
     - name: 5] check .init.ubuntu directory
