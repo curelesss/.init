@@ -5,9 +5,7 @@
 - Clone corrensponding system .setup repo
 
 > [!IMPORTANT]
-> BIOS Settings
-> Security Boot: Disable
-> Boot Sequence: UEFI
+> BIOS Settings - Security Boot: Disable / Boot Sequence: UEFI
 
 BIOS - boot sequence - UEFI
 
