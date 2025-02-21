@@ -1,7 +1,13 @@
 # Personal System Setup Initial Repository
+
 - Github SSH Setup
 - Clone .dotfiles repo
 - Clone corrensponding system .setup repo
+
+> [!IMPORTANT]
+> BIOS Settings
+> Security Boot: Disable
+> Boot Sequence: UEFI
 
 BIOS - boot sequence - UEFI
 
