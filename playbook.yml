@@ -90,6 +90,8 @@
       pacman:
         name: stow
         state: present
+      tags:
+        - arch
 
     - name: 4] check dotfile directory
       stat:
