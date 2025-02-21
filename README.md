@@ -7,19 +7,30 @@
 > [!IMPORTANT]
 > BIOS Settings - Security Boot: Disable / Boot Sequence: UEFI
 
-BIOS - boot sequence - UEFI
+## Arch Linux
 
+### System Installation
+
+WIFI Setup
+```bash
 iwctl
 
+// check if the wifi card is power on
 device list
 
+// search for available wifi networks
 station Device_Name get-networks
 
+// connect 
 station Device_Name connect Network_Name
 
+// exit iwctl
 exit
 
+// testing connection
 ping -c 5 baidu.com
+``` bash
+
 
 reflector --verbose --country 'China' -l 200 -p https --sort rate --save /etc/pacman.d/mirrorlist
 
@@ -66,9 +77,6 @@ install
 
 shutdown now
 
-## Arch Linux
-
-### System Installation
 
 ### 
 Clone Repo
