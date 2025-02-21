@@ -5,3 +5,4 @@ git remote set-url origin git@github.com:curelesss/.init.git
 ssh -T git@github.com
 
 ansible-playbook playbook.yml --tags=dotfiles
+ansible-playbook playbook.yml --tags=.init.arch

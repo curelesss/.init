@@ -108,6 +108,21 @@
         - dotfiles
         - termux
 
+    - name: 4-1] check .init.arch directory
+      stat:
+        path: "~/.init.arch"
+      register: arch_dir
+      tags:
+        - .init.arch
+
+    - name: 4] clone .init.arch repo
+      git:
+        repo: "git@github.com:curelesss/.init.arch.git"
+        dest: "~/.init.arch"
+      when: not arch_dir.stat.exists
+      tags:
+        - .init.arch
+
     - name: 5] check .init.ubuntu directory
       stat:
         path: "~/.init.ubuntu"
