@@ -115,7 +115,7 @@
       tags:
         - .init.arch
 
-    - name: 4] clone .init.arch repo
+    - name: 4-1] clone .init.arch repo
       git:
         repo: "git@github.com:curelesss/.init.arch.git"
         dest: "~/.init.arch"
