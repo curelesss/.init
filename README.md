@@ -45,46 +45,59 @@ Using reflector
 reflector --verbose --country 'China' -l 200 -p https --sort rate --save /etc/pacman.d/mirrorlist
 ```
 
+Pre-Install
+```bash
+# sync package manager db 
 pacman -Sy
 
+# acquire keying
 pacman -S archlinux-keyring
 
+# update install script
 pacman -S archinstall
 
+Format Target Disk
+```bash
+# identify target disk
 lsblk
 
+# format using gdisk
 gdisk /dev/nvme0n1
+```
+- 'x' -> enter expert mode
+- 'z' -> format target disk
+- Blank out MBR: y
 
-x -> enter expert mode
-z -> format target disk
-Blank out MBR: y
+finally using 'lsblk' comand again -> to check target disk status after formation
 
-lsblk -> to check target disk status after formation
-
+### Install Arch Linux
+```bash
+# run install script
 archinstall
+```
+Installation Settings
+- Disk configuration: 
+-- Partitioning
+-- Use a best-effort default partition layout
+-- 'Space' to chose correct target disk'
+-- btrfs
+-- use BTRFS subvolumes with a default structure: yes
+-- Use compression
+--'Back' to main menu
 
-Disk configuration: 
-Partitioning
-Use a best-effort default partition layout
-'Space' to chose correct target disk'
-btrfs
-use BTRFS subvolumes with a default structure: yes
-Use compression
-'Back' to main menu
+- Swap: Enabled 
+- Bootloader: Grub
+- root password: xxxxxx
+- add user: xxxxxx
+- Profile: Desktop - Gnome / Minimal
+- Audio: pipewire
+- Network configuration: Use NetworkManager
+- Additional packages: vim git ansible
+- Timezone: Asia/Shanghai
 
-Swap: Enabled 
-Bootloader: Grub
-root password: xxxxxx
-add user: xxxxxx
-Profile: Desktop - Gnome / Minimal
-Audio: pipewire
-Network configuration: Use NetworkManager
-Additional packages: vim git ansible
-Timezone: Asia/Shanghai
+- install
 
-install
-
-shutdown now
+Finally, shutdown system using '$ shutdown now` command, and remove install media.
 
 
 ### 
