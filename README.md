@@ -45,7 +45,7 @@ Using reflector
 reflector --verbose --country 'China' -l 200 -p https --sort rate --save /etc/pacman.d/mirrorlist
 ```
 
-Pre-Install
+### Pre-Install
 ```bash
 # sync package manager db 
 pacman -Sy
@@ -57,7 +57,7 @@ pacman -S archlinux-keyring
 pacman -S archinstall
 ```
 
-Format Target Disk
+### Format Target Disk
 ```bash
 # identify target disk
 lsblk
