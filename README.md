@@ -15,19 +15,19 @@ WIFI Setup
 ```bash
 iwctl
 
-// check if the wifi card is power on
+# check if the wifi card is power on
 device list
 
-// search for available wifi networks
+# search for available wifi networks
 station Device_Name get-networks
 
-// connect 
+# connect 
 station Device_Name connect Network_Name
 
-// exit iwctl
+# exit iwctl
 exit
 
-// testing connection
+# testing connection
 ping -c 5 baidu.com
 ```
 
