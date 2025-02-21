@@ -11,7 +11,7 @@
 
 ### System Installation
 
-WIFI Setup
+#### WIFI Setup
 ```bash
 iwctl
 
@@ -30,11 +30,20 @@ exit
 # testing connection
 ping -c 5 baidu.com
 ```
+### Local Mirrors
 
 
-reflector --verbose --country 'China' -l 200 -p https --sort rate --save /etc/pacman.d/mirrorlist
-
+Manual Setup
+```bash
 vim /etc/pacman.d/mirrorlist
+
+# add following to the first line of mirrorlist
+Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch
+```
+Using reflector
+```bash
+reflector --verbose --country 'China' -l 200 -p https --sort rate --save /etc/pacman.d/mirrorlist
+```
 
 pacman -Sy
 
