@@ -29,7 +29,7 @@ exit
 
 // testing connection
 ping -c 5 baidu.com
-``` bash
+```
 
 
 reflector --verbose --country 'China' -l 200 -p https --sort rate --save /etc/pacman.d/mirrorlist
