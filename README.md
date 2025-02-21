@@ -55,6 +55,7 @@ pacman -S archlinux-keyring
 
 # update install script
 pacman -S archinstall
+```
 
 Format Target Disk
 ```bash
