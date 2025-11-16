@@ -1,1 +1,1 @@
-ansible-playbook playbook.yml --tags=dotfile
+ansible-playbook playbook.yml --tags=dotfiles
