@@ -2,10 +2,8 @@
   gather_facts: no
   hosts: localhost
   vars:
-    source_key: "ssh/id_rsa"
-    dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa"
-    gnupg_zip: "gpg/gnupg-backup.zip"
-    gnupg_dir: "{{ lookup('env', 'HOME') }}/.gnupg"
+      source_key: "ssh/id_rsa"
+      dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa"
 
   tasks:
     
@@ -146,23 +144,3 @@
       when: not init_ubuntu_dir.stat.exists
       tags:
         - .init.ubuntu
-
-    # GPG-related tasks (added)
-
-    - name: 6] Check if ~/.gnupg directory exists
-      stat:
-        path: "{{ gnupg_dir }}"
-      register: gnupg_dir_check
-      tags:
-        - gpg
-
-    - name: 6] Unzip gnupg-backup.zip if ~/.gnupg doesn't exist
-      unarchive:
-        src: "{{ gnupg_zip }}"
-        dest: "{{ lookup('env', 'HOME') }}"
-        remote_src: yes
-      when: not gnupg_dir_check.stat.exists
-      tags:
-        - gpg
-
-
