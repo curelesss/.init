@@ -2,10 +2,10 @@
   gather_facts: no
   hosts: localhost
   vars:
-    source_key: "ssh/id_rsa"
-    dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa"
-    gnupg_zip: "gpg/gnupg-backup.zip"
-    gnupg_dir: "{{ lookup('env', 'HOME') }}/.gnupg"
+      source_key: "ssh/id_rsa"
+      dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa"
+      source_file: "gpg/gnupg-backup.zip"
+      dest_file: "gpg/gnupg.zip"
 
   tasks:
     
@@ -64,6 +64,55 @@
         - macos
         - arch
         - wsl
+
+    - name: check ~/.gnupg exists
+      stat:
+        path: ~/.gnupg
+      register: gnupg_dir
+      tags:
+        - gpg
+
+    - name: 333333] Install gpg key
+      copy:
+        src: "{{ source_file }}"
+        dest: "{{ dest_file }}"
+        mode: 0600
+      when: not gnupg_dir.stat.exists
+      tags:
+        - gpg
+
+    - name: ~/.gnupg does not exist，create it
+      file:
+        path: ~/.gnupg
+        state: directory
+        mode: '0700'
+      when: not gnupg_dir.stat.exists
+      tags:
+        - gpg
+
+    - name: unzip decrypted gnupg.zip
+      unarchive:
+        src: gpg/gnupg.zip
+        dest: ~/.gnupg                  # 直接解到 ~/.gnupg 目录里
+        remote_src: true
+        creates: ~/.gnupg/pubring.kbx # 防止重复解压
+      when: not gnupg_dir.stat.exists
+      tags:
+        - gpg
+
+    - name: fix permissions
+      command: chmod -R u=rwX,go= ~/.gnupg
+      when: not gnupg_dir.stat.exists
+      tags:
+        - gpg
+
+    - name: delete decrypted gnupg.zip
+      file:
+        path: gpg/gnupg.zip
+        state: absent
+      tags:
+        - gpg
+
 
     - name: 3] Install git config
       ansible.builtin.command:
@@ -146,23 +195,3 @@
       when: not init_ubuntu_dir.stat.exists
       tags:
         - .init.ubuntu
-
-    # GPG-related tasks (added)
-
-    - name: 6] Check if ~/.gnupg directory exists
-      stat:
-        path: "{{ gnupg_dir }}"
-      register: gnupg_dir_check
-      tags:
-        - gpg
-
-    - name: 6] Unzip gnupg-backup.zip if ~/.gnupg doesn't exist
-      unarchive:
-        src: "{{ gnupg_zip }}"
-        dest: "{{ lookup('env', 'HOME') }}"
-        remote_src: yes
-      when: not gnupg_dir_check.stat.exists
-      tags:
-        - gpg
-
-
