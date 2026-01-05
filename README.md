@@ -7,6 +7,19 @@
 > [!IMPORTANT]
 > BIOS Settings - Security Boot: Disable / Boot Sequence: UEFI
 
+## Omarchy
+
+```bash
+sudo pacman -S ansible
+git clone https://github.com/curelesss/.init.git
+cd .init
+nvim sudo
+./1.github.sh
+./1.2.gpg.sh
+```
+```
+```
+
 ## Arch Linux
 
 ### System Installation
