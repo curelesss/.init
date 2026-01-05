@@ -113,6 +113,22 @@
       tags:
         - gpg
 
+    - name: Install gnupg
+      become: yes
+      pacman:
+        name: gnupg
+        state: present
+      tags:
+        - pass
+
+
+    - name: Install pass
+      become: yes
+      pacman:
+        name: pass
+        state: present
+      tags:
+        - pass
 
     - name: 3] Install git config
       ansible.builtin.command:

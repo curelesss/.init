@@ -14,7 +14,14 @@ sudo pacman -S ansible
 git clone https://github.com/curelesss/.init.git
 cd .init
 nvim sudo
+
+# 1. setup git username & email
+# 2. install ssh key
+# 3. install local git config
+# 4. ensure openssh is installed
 ./1.github.sh
+
+
 ./1.2.gpg.sh
 ```
 ```
