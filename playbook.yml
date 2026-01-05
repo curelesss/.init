@@ -4,7 +4,7 @@
   vars:
       source_key: "ssh/id_rsa"
       dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa"
-      source_file: "gpg/gnupg-backup.zip"
+      source_file: "~/dotfiles/gpg/gnupg-backup.zip"
       dest_file: "gpg/gnupg.zip"
 
   tasks:
@@ -197,17 +197,17 @@
       tags:
         - .init.arch
 
-    - name: 5] check .init.ubuntu directory
+    - name: 5] ensuer password-store not exists
       stat:
-        path: "~/.init.ubuntu"
-      register: init_ubuntu_dir
+        path: "~/.passowrd-store"
+      register: init_password_store
       tags:
-        - .init.ubuntu
+        - password-store
 
-    - name: 5] clone .init.ubuntu
+    - name: 5] clone pass repo
       git:
-        repo: "git@github.com:curelesss/.init.ubuntu.git"
-        dest: "~/.init.ubuntu"
-      when: not init_ubuntu_dir.stat.exists
+        repo: "git@github.com:curelesss/.password-store.git"
+        dest: "~/.password-store"
+      when: not init_password_store.stat.exists
       tags:
-        - .init.ubuntu
+        - password-store

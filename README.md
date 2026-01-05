@@ -21,6 +21,8 @@ nvim sudo
 # 4. ensure openssh is installed
 ./1.github.sh
 
+# clone dotfiles repo
+./2.dotfile.sh
 
 ./1.2.gpg.sh
 ```
