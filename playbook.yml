@@ -130,6 +130,17 @@
       tags:
         - pass
 
+    - name: Install necessary packages
+      become: true
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - gnupg
+        - pass
+      tags:
+        - pass.ubuntu
+
     - name: 3] Install git config
       ansible.builtin.command:
         cmd: cp ssh/config "{{ lookup('env', 'HOME') }}/.ssh/"
