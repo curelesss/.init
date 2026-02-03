@@ -7,27 +7,6 @@
 > [!IMPORTANT]
 > BIOS Settings - Security Boot: Disable / Boot Sequence: UEFI
 
-## Omarchy
-
-```bash
-sudo pacman -S ansible
-git clone https://github.com/curelesss/.init.git
-cd .init
-nvim sudo
-
-# 1. setup git username & email
-# 2. install ssh key
-# 3. install local git config
-# 4. ensure openssh is installed
-./1.github.sh
-
-# clone dotfiles repo
-./2.dotfile.sh
-
-./1.2.gpg.sh
-```
-```
-```
 
 ## Arch Linux
 
@@ -80,24 +59,34 @@ pacman -S archinstall
 ```
 
 ### Format Target Disk
-```bash
-# identify target disk
-lsblk
 
-# format using gdisk
+- identify target disk
+```bash
+lsblk
+```
+
+- format using gdisk
+```bash
 gdisk /dev/nvme0n1
 ```
-- 'x' -> enter expert mode
-- 'z' -> format target disk
-- Blank out MBR: y
+  - 'x' -> enter expert mode
+  - 'z' -> format target disk
+  - Blank out MBR: y
 
-finally using 'lsblk' comand again -> to check target disk status after formation
+  - finally using 'lsblk' comand again -> to check target disk status after formation
+
+# format using cfdisk
+```bash
+cfdisk /dev/nvme0n1
+```
 
 ### Install Arch Linux
+
+- run install script
 ```bash
-# run install script
 archinstall
 ```
+
 Installation Settings
 - Disk configuration: 
 -- Partitioning
@@ -122,17 +111,22 @@ Installation Settings
 
 Finally, shutdown system using '$ shutdown now` command, and remove install media.
 
+### Initial Setup
 
-### 
-Clone Repo
+- Clone Repo
 ```bash
 git clone https://github.com/curelesss/.init.git
+cd .init
 ```
 
-Setup Github SSH / clone .dotfiles & .setup.arch
+- Setup locale / install Chinese Font / Setup several Chinese Character
 ```bash
-cd .init
+./arch.0.font.sh
+```
+
+Setup Github SSH
+```bash
 vim sudo
-./.init.arch
+./arch.1.github.sh
 ```
  
