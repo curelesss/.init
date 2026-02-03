@@ -1,0 +1,56 @@
+- name: GPG setup book
+  gather_facts: no
+  hosts: localhost
+  vars:
+      source_file: "~/.dotfiles/gpg/gnupg-backup.zip"
+      dest_file: "gpg/gnupg.zip"
+
+  tasks:
+
+    - name: 1/6] check ~/.gnupg exists
+      stat:
+        path: ~/.gnupg
+      register: gnupg_dir
+      tags:
+        - gpg
+
+    - name: 2/6] Install gpg key
+      copy:
+        src: "{{ source_file }}"
+        dest: "{{ dest_file }}"
+        mode: 0600
+      when: not gnupg_dir.stat.exists
+      tags:
+        - gpg
+
+    - name: 3/6] ~/.gnupg does not exist，create it
+      file:
+        path: ~/.gnupg
+        state: directory
+        mode: '0700'
+      when: not gnupg_dir.stat.exists
+      tags:
+        - gpg
+
+    - name: 4/6] unzip decrypted gnupg.zip
+      unarchive:
+        src: gpg/gnupg.zip
+        dest: ~/.gnupg                  # 直接解到 ~/.gnupg 目录里
+        remote_src: true
+        creates: ~/.gnupg/pubring.kbx # 防止重复解压
+      when: not gnupg_dir.stat.exists
+      tags:
+        - gpg
+
+    - name: 5/6] fix permissions
+      command: chmod -R u=rwX,go= ~/.gnupg
+      when: not gnupg_dir.stat.exists
+      tags:
+        - gpg
+
+    - name: 6/6] delete decrypted gnupg.zip
+      file:
+        path: gpg/gnupg.zip
+        state: absent
+      tags:
+        - gpg

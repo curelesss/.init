@@ -7,7 +7,7 @@
 
   tasks:
     
-    - name: 1] git user.email
+    - name: 1/5] git user.email
       git_config:
         name: user.email
         scope: global
@@ -15,7 +15,7 @@
       tags:
         - github
 
-    - name: 1] git user.name
+    - name: 2/5] git user.name
       git_config:
         name: user.name
         scope: global
@@ -23,7 +23,7 @@
       tags:
         - github
 
-    - name: 1] Ensure .ssh directory exists
+    - name: 3/5] Ensure .ssh directory exists
       file:
         dest: "{{ dest_key | dirname }}"
         mode: 0700
@@ -31,10 +31,16 @@
       tags:
         - github
 
-    - name: 3] Install ssh key
+    - name: 4/5] Install ssh key
       copy:
         src: "{{ source_key }}"
         dest: "{{ dest_key }}"
         mode: 0600
+      tags:
+        - github
+
+    - name: 5/5] Install git config
+      ansible.builtin.command:
+        cmd: cp github/config "{{ lookup('env', 'HOME') }}/.ssh/"
       tags:
         - github
