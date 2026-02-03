@@ -9,15 +9,15 @@ sudo -v || { echo "sudo failed"; exit 1; }
 
 echo ""
 echo "Setting Chinese Locale ..."
-sudo ./script/arch.0.1.locale.sh
+sudo ./script/arch/arch.0.1.locale.sh
 
 echo ""
 echo "Installing Fonts ..."
-sudo ./script/arch.0.2.font.sh
+sudo ./script/arch/arch.0.2.font.sh
 
 echo ""
 echo "Setting several Chinese Characters ..."
-sudo ./script/arch.0.3.font.sc.sh
+sudo ./script/arch/arch.0.3.font.sc.sh
 
 echo ""
 echo "All scripts finished."
