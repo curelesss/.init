@@ -1,1 +1,1 @@
-ansible-playbook book.gpg.yml --become-password-file=sudo --ask-vault-pass --tags=gpg
+ansible-playbook book.gpg.yml -K --ask-vault-pass --tags=gpg
