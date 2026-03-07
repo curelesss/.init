@@ -1,0 +1,25 @@
+---
+- name: Deploy WireGuard Configuration
+  hosts: localhost
+  become: true
+  vars:
+    wg_conf_src: "{{ lookup('env', 'HOME') }}/.dotfiles/wireguard/wg0.conf"
+    wg_conf_dest: "/etc/wireguard/wg0.conf"
+
+  tasks:
+    - name: Ensure /etc/wireguard directory exists
+      ansible.builtin.file:
+        path: /etc/wireguard
+        state: directory
+        owner: root
+        group: root
+        mode: '0700'
+
+    - name: Deploy decrypted WireGuard config
+      ansible.builtin.copy:
+        src: "{{ wg_conf_src }}"
+        dest: "{{ wg_conf_dest }}"
+        owner: root
+        group: root
+        mode: '0600'
+        decrypt: true  # ansible-vault decrypts automatically if vault password is provided

@@ -4,7 +4,7 @@
   vars:
       source_key: "ssh/id_rsa"
       dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa"
-      source_file: "~/dotfiles/gpg/gnupg-backup.zip"
+      source_file: "~/.dotfiles/gpg/gnupg-backup.zip"
       dest_file: "gpg/gnupg.zip"
 
   tasks:
