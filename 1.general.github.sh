@@ -1,4 +1,4 @@
-ansible-playbook 1.book.github.yml -K --ask-vault-pass --tags=github
+ansible-playbook book.1.github.yml -K --ask-vault-pass --tags=github
 
 git remote set-url origin git@github.com:curelesss/.init.git
 

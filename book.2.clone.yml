@@ -1,0 +1,23 @@
+---
+- name: Clone repos
+  hosts: localhost
+  connection: local
+  vars:
+    repos:
+      - git@github.com:curelesss/.dotfiles.git
+      - git@github.com:curelesss/.password-store.git
+
+  tasks:
+    - name: Check if repo directories exist
+      ansible.builtin.stat:
+        path: "{{ ansible_env.HOME }}/{{ item | basename | regex_replace('\\.git$', '') }}"
+      register: repo_stat
+      loop: "{{ repos }}"
+
+    - name: Clone repos
+      ansible.builtin.git:
+        repo: "{{ item.item }}"
+        dest: "{{ ansible_env.HOME }}/{{ item.item | basename | regex_replace('\\.git$', '') }}"
+        accept_hostkey: true
+      when: not item.stat.exists
+      loop: "{{ repo_stat.results }}"
