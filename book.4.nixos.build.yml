@@ -10,8 +10,13 @@
       - hyprland
       - keyd
       - kitty
+      - matugen
       - neovim
       - nixos-config
+      - swayosd
+      - wallpaper
+      - waybar
+      - wezterm
       - zsh
 
   tasks:
