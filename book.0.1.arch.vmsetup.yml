@@ -28,3 +28,7 @@
         name: vmware-vmblock-fuse
         enabled: true
         state: started
+
+    - name: Remind to reboot
+      ansible.builtin.debug:
+        msg: "Setup complete. Please reboot the VM to fix display resolution and clipboard integration."
