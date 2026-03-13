@@ -1,0 +1,30 @@
+---
+- name: Setup VMware tools and Wayland clipboard on Arch Linux
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Install VMware and Wayland packages
+      community.general.pacman:
+        name:
+          - open-vm-tools
+          - xdg-desktop-portal
+          - xdg-desktop-portal-gnome
+          - wl-clipboard
+          - xorg-xwayland
+          - gtkmm3
+        state: present
+        update_cache: true
+
+    - name: Enable and start vmtoolsd
+      ansible.builtin.systemd:
+        name: vmtoolsd
+        enabled: true
+        state: started
+
+    - name: Enable and start vmware-vmblock-fuse
+      ansible.builtin.systemd:
+        name: vmware-vmblock-fuse
+        enabled: true
+        state: started
