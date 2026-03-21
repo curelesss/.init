@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Resolve flake root from wherever the script lives
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FLAKE_DIR="$SCRIPT_DIR"
 
@@ -44,10 +43,12 @@ echo ""
 read -rp "  Type YES to continue: " confirm
 [[ "$confirm" != "YES" ]] && { echo "Aborted."; exit 1; }
 
-# ── 4. Enable flakes in the live ISO ──────────────────────────────────────────
-sudo mkdir -p /etc/nix
+# ── 4. Enable flakes ───────────────────────────────────────────────────────────
+# /etc/nix is read-only in the live ISO — write to user config instead
+mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" \
-  | sudo tee /etc/nix/nix.conf > /dev/null
+  >> ~/.config/nix/nix.conf
+export NIX_CONFIG="experimental-features = nix-command flakes"
 echo "[ok] flakes enabled"
 
 # ── 5. Wrapper flake — injects disk device via extendModules ──────────────────
