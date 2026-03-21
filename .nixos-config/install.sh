@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Print each command before executing so we see exactly where it fails
+set -x
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FLAKE_DIR="$SCRIPT_DIR"
 
+set +x
 echo ""
 echo "╔══════════════════════════════════════╗"
 echo "║       NixOS Flake Installer          ║"
@@ -44,8 +48,7 @@ read -rp "  Type YES to continue: " confirm
 [[ "$confirm" != "YES" ]] && { echo "Aborted."; exit 1; }
 
 # ── 4. Enable flakes ───────────────────────────────────────────────────────────
-# /etc/nix is read-only in the live ISO.
-# Write to both user config AND root config so sudo commands inherit it.
+set -x
 mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" \
   >> ~/.config/nix/nix.conf
@@ -55,9 +58,10 @@ echo "experimental-features = nix-command flakes" \
   | sudo tee /root/.config/nix/nix.conf > /dev/null
 
 export NIX_CONFIG="experimental-features = nix-command flakes"
+set +x
 echo "[ok] flakes enabled (user + root)"
 
-# ── 5. Wrapper flake — injects disk device via extendModules ──────────────────
+# ── 5. Wrapper flake ───────────────────────────────────────────────────────────
 WORKDIR=$(mktemp -d /tmp/nixos-install-XXXXXX)
 trap 'rm -rf "$WORKDIR"' EXIT
 
@@ -74,32 +78,45 @@ cat > "$WORKDIR/flake.nix" <<EOF
 }
 EOF
 
-# Reuse the pinned lock from your repo — avoids any GitHub API calls
 cp "$FLAKE_DIR/flake.lock" "$WORKDIR/flake.lock"
-echo "[ok] wrapper flake ready (lock inherited, no network needed)"
+echo "[ok] wrapper flake written to $WORKDIR"
 
-# ── 6. Read disko revision from flake.lock (no jq needed) ────────────────────
-# Extract the rev using grep + sed — available in every live ISO
-DISKO_REV=$(grep -A5 '"disko"' "$FLAKE_DIR/flake.lock" \
-  | grep '"rev"' \
-  | head -1 \
-  | sed 's/.*"rev": "\(.*\)".*/\1/')
+# ── 6. Read disko revision ─────────────────────────────────────────────────────
+echo ""
+echo "[..] reading disko revision from flake.lock"
 
-if [[ -z "$DISKO_REV" || "$DISKO_REV" == "null" ]]; then
-  echo "Error: could not read disko revision from flake.lock"
+# Print the raw lock content around disko for debugging
+echo "--- flake.lock disko section ---"
+grep -A10 '"disko"' "$FLAKE_DIR/flake.lock" || echo "(disko not found in lock)"
+echo "--- end ---"
+
+# Try multiple patterns to be robust against lock format variations
+DISKO_REV=""
+
+# Pattern 1: inside a "locked" block after "disko"
+DISKO_REV=$(awk '/"disko"/{found=1} found && /"rev"/{
+  match($0, /"rev": "([^"]+)"/, a); print a[1]; exit}' \
+  "$FLAKE_DIR/flake.lock")
+
+if [[ -z "$DISKO_REV" ]]; then
+  echo "Error: could not extract disko revision from flake.lock"
+  echo "Please paste the output above and report it."
   exit 1
 fi
+
 echo "[ok] disko revision: $DISKO_REV"
 
 # ── 7. Disko: partition, format, mount ────────────────────────────────────────
 echo ""
 echo "[..] disko — partitioning $DISK"
 
+set -x
 sudo nix run \
   --extra-experimental-features "nix-command flakes" \
   "github:nix-community/disko/$DISKO_REV" -- \
   --mode disko \
   --flake "$WORKDIR#$HOST"
+set +x
 
 echo "[ok] /mnt mounted"
 
@@ -107,9 +124,11 @@ echo "[ok] /mnt mounted"
 echo ""
 echo "[..] nixos-install"
 
+set -x
 sudo nixos-install \
   --no-root-passwd \
   --flake "$WORKDIR#$HOST"
+set +x
 
 echo ""
 echo "╔══════════════════════════════════════╗"
