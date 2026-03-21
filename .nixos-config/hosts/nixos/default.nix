@@ -23,13 +23,19 @@
   # boot.loader.grub.device = "/dev/sda";
   # boot.loader.efi.canTouchEfiVariables = false;
 
-  # ── Bootloader: GRUB ────────────────────────────────────────────────────────
+
+  # ── Bootloader: GRUB BIOS/legacy mode only ──────────────────────────────────
   boot.loader.grub = {
-    enable   = true;
-    device   = config.myConfig.diskDevice;           # "nodev" = UEFI mode (installs to ESP)
-    efiSupport = false;
-    useOSProber = false;           # detects other OSes (dual boot)
+    enable        = true;
+    device        = config.myConfig.diskDevice;
+    efiSupport    = false;
+    efiInstallAsRemovable = false;
+    useOSProber   = false;
+    mirroredBoots = lib.mkForce [];
   };
+
+  # Explicitly disable systemd-boot so nothing conflicts with GRUB
+  boot.loader.systemd-boot.enable = false;
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
