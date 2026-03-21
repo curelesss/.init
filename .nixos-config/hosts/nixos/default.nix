@@ -87,7 +87,7 @@
   users.users.fdong = {               # ← change username
     isNormalUser    = true;
     extraGroups     = [ "wheel" "networkmanager" "audio" "video" ];
-    hashedPasswordFile = /etc/nixos/fdong.hash;
+    hashedPasswordFile = "/etc/nixos/fdong.hash";
     shell           = pkgs.bash;      # or pkgs.zsh / pkgs.fish
   };
 
