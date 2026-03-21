@@ -87,7 +87,7 @@
   users.users.fdong = {               # ← change username
     isNormalUser    = true;
     extraGroups     = [ "wheel" "networkmanager" "audio" "video" ];
-    initialPassword = "$6$4lUEDs/pizHjDI/j$46hQF/dOETuAYFyQKw8AF1nrGN/qyAhFosXntc4j9WNpZR0Q3qcI/r6r3muzg9me/9r6qnQS/qUcdeeip07Kw.";     # change on first login with: passwd
+    hashedPasswordFile = /etc/nixos/fdong.hash;
     shell           = pkgs.bash;      # or pkgs.zsh / pkgs.fish
   };
 
