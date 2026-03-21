@@ -1,31 +1,36 @@
 {
   "nodes": {
-    "nixpkgs": {
+    "disko": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
       "locked": {
-        "lastModified": 1772963539,
-        "narHash": "sha256-9jVDGZnvCckTGdYT53d/EfznygLskyLQXYwJLKMPsZs=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "9dcb002ca1690658be4a04645215baea8b95f31d",
+        "lastModified": 1773889306,
+        "narHash": "sha256-PAqwnsBSI9SVC2QugvQ3xeYCB0otOwCacB1ueQj2tgw=",
+        "owner": "nix-community",
+        "repo": "disko",
+        "rev": "5ad85c82cc52264f4beddc934ba57f3789f28347",
         "type": "github"
       },
       "original": {
-        "id": "nixpkgs",
-        "ref": "nixos-unstable",
-        "type": "indirect"
+        "owner": "nix-community",
+        "repo": "disko",
+        "type": "github"
       }
     },
-    "nixpkgs_2": {
+    "nixpkgs": {
       "locked": {
-        "lastModified": 1772963539,
-        "narHash": "sha256-9jVDGZnvCckTGdYT53d/EfznygLskyLQXYwJLKMPsZs=",
-        "owner": "nixos",
+        "lastModified": 1773821835,
+        "narHash": "sha256-TJ3lSQtW0E2JrznGVm8hOQGVpXjJyXY2guAxku2O9A4=",
+        "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "9dcb002ca1690658be4a04645215baea8b95f31d",
+        "rev": "b40629efe5d6ec48dd1efba650c797ddbd39ace0",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
+        "owner": "NixOS",
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
@@ -33,26 +38,8 @@
     },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs",
-        "thorium": "thorium"
-      }
-    },
-    "thorium": {
-      "inputs": {
-        "nixpkgs": "nixpkgs_2"
-      },
-      "locked": {
-        "lastModified": 1773085130,
-        "narHash": "sha256-Ze0Ph0Rv5jPsQjla8FmW/ARSO1jPY0WDai9+Dx0u3A0=",
-        "owner": "Rishabh5321",
-        "repo": "thorium_flake",
-        "rev": "6718768ca5d57322068c10ea922c793dc6b7d472",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Rishabh5321",
-        "repo": "thorium_flake",
-        "type": "github"
+        "disko": "disko",
+        "nixpkgs": "nixpkgs"
       }
     }
   },
