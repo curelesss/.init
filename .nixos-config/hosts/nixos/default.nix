@@ -27,7 +27,6 @@
   # ── Bootloader: GRUB BIOS/legacy mode only ──────────────────────────────────
   boot.loader.grub = {
     enable        = true;
-    device        = config.myConfig.diskDevice;
     efiSupport    = false;
     useOSProber   = false;
   };
