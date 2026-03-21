@@ -2,7 +2,7 @@
 
   options.myConfig.diskDevice = lib.mkOption {
     type        = lib.types.str;
-    default     = "/dev/nvme0n1";
+    default     = "/dev/sda";
     description = "Target disk device for installation";
   };
 
@@ -14,24 +14,11 @@
         type = "gpt";
         partitions = {
 
-          # GRUB on GPT needs this tiny partition for the bootloader code
-          # even when booting UEFI — keeps both BIOS and UEFI working
+          # Required for GRUB on GPT in BIOS mode
           MBR = {
-            size = "1M";
-            type = "EF02";    # BIOS boot partition — GRUB stage 1.5
-            priority = 1;     # must be first on disk
-          };
-
-          # EFI system partition — for UEFI GRUB
-          ESP = {
-            size = "512M";
-            type = "EF00";
-            content = {
-              type         = "filesystem";
-              format       = "vfat";
-              mountpoint   = "/boot/efi";
-              mountOptions = [ "umask=0077" ];
-            };
+            size     = "1M";
+            type     = "EF02";
+            priority = 1;
           };
 
           # Root — takes everything remaining

@@ -51,13 +51,9 @@
   # ── Bootloader: GRUB ────────────────────────────────────────────────────────
   boot.loader.grub = {
     enable   = true;
-    device   = "nodev";           # "nodev" = UEFI mode (installs to ESP)
-    efiSupport = true;
-    useOSProber = true;           # detects other OSes (dual boot)
-  };
-  boot.loader.efi = {
-    canTouchEfiVariables = true;
-    efiSysMountPoint     = "/boot/efi";   # matches disko.nix mountpoint
+    device   = config.myConfig.diskDevice;           # "nodev" = UEFI mode (installs to ESP)
+    efiSupport = false;
+    useOSProber = false;           # detects other OSes (dual boot)
   };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
