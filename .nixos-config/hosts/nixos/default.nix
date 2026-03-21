@@ -70,6 +70,9 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
+  # Display manager — needed to actually start a session
+  services.displayManager.gdm.enable = true;   # or lightdm
+
 
   # Configure keymap in X11
   services.xserver.xkb = {
