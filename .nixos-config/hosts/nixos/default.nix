@@ -1,31 +1,6 @@
-# { config, pkgs, myAppList, ... }:
-{ pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
-  # imports = [
-  #
-  #     # Desktop Env
-  #     ../../optional/gnome.nix    # enable Gnome Env
-  #     # ../../optional/hyprland.nix
-  #     # ../../optional/hyprland_2.nix
-  #   
-  #     ../../service/keyd.nix      # hotkey daemon
-  #     ../../common/fonts.nix	  # Chinese / Nerd fonts
-  #     ../../common/packages.nix   # package list
-  #     ../../common/im.nix         # input method - rime-ice
-  #     ../../common/zsh.nix	  # set zsh as default shell
-  #     ../../common/thorium.nix
-  #
-  #     # Optional
-  #     ../../optional/krusader.nix    # enable Gnome Env
-  #     ../../optional/synology-drive-client.nix    # Manually provide 'deb' file download url, and sha265 required
-  #     ../../optional/wireguard.nix
-  #     ../../optional/emacs.nix
-  #
-  #     # 
-  #     ./hardware-configuration.nix
-  #   ];
-
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
