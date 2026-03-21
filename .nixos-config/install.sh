@@ -68,14 +68,20 @@ cat > "$WORKDIR/flake.nix" <<EOF
 }
 EOF
 
-echo "[..] locking wrapper flake"
-nix flake lock "$WORKDIR" --override-input nixos-config "path:$FLAKE_DIR"
-echo "[ok] wrapper flake ready"
+# Reuse the pinned lock from your repo — avoids any GitHub API calls
+cp "$FLAKE_DIR/flake.lock" "$WORKDIR/flake.lock"
+echo "[ok] wrapper flake ready (lock inherited, no network needed)"
 
 # ── 6. Disko: partition, format, mount ────────────────────────────────────────
 echo ""
 echo "[..] disko — partitioning $DISK"
-sudo nix run github:nix-community/disko/latest -- \
+
+# Read the exact disko revision already pinned in flake.lock
+# so nix run never hits the GitHub API to resolve 'latest'
+DISKO_REV=$(jq -r '.nodes.disko.locked.rev' "$FLAKE_DIR/flake.lock")
+echo "[ok] disko revision: $DISKO_REV"
+
+sudo nix run "github:nix-community/disko/$DISKO_REV" -- \
   --mode disko \
   --flake "$WORKDIR#$HOST"
 echo "[ok] /mnt mounted"
