@@ -44,12 +44,18 @@ read -rp "  Type YES to continue: " confirm
 [[ "$confirm" != "YES" ]] && { echo "Aborted."; exit 1; }
 
 # ── 4. Enable flakes ───────────────────────────────────────────────────────────
-# /etc/nix is read-only in the live ISO — write to user config instead
+# /etc/nix is read-only in the live ISO.
+# Write to both user config AND root config so sudo commands inherit it.
 mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" \
   >> ~/.config/nix/nix.conf
+
+sudo mkdir -p /root/.config/nix
+echo "experimental-features = nix-command flakes" \
+  | sudo tee /root/.config/nix/nix.conf > /dev/null
+
 export NIX_CONFIG="experimental-features = nix-command flakes"
-echo "[ok] flakes enabled"
+echo "[ok] flakes enabled (user + root)"
 
 # ── 5. Wrapper flake — injects disk device via extendModules ──────────────────
 WORKDIR=$(mktemp -d /tmp/nixos-install-XXXXXX)
@@ -72,23 +78,35 @@ EOF
 cp "$FLAKE_DIR/flake.lock" "$WORKDIR/flake.lock"
 echo "[ok] wrapper flake ready (lock inherited, no network needed)"
 
-# ── 6. Disko: partition, format, mount ────────────────────────────────────────
+# ── 6. Read disko revision from flake.lock (no jq needed) ────────────────────
+# Extract the rev using grep + sed — available in every live ISO
+DISKO_REV=$(grep -A5 '"disko"' "$FLAKE_DIR/flake.lock" \
+  | grep '"rev"' \
+  | head -1 \
+  | sed 's/.*"rev": "\(.*\)".*/\1/')
+
+if [[ -z "$DISKO_REV" || "$DISKO_REV" == "null" ]]; then
+  echo "Error: could not read disko revision from flake.lock"
+  exit 1
+fi
+echo "[ok] disko revision: $DISKO_REV"
+
+# ── 7. Disko: partition, format, mount ────────────────────────────────────────
 echo ""
 echo "[..] disko — partitioning $DISK"
 
-# Read the exact disko revision already pinned in flake.lock
-# so nix run never hits the GitHub API to resolve 'latest'
-DISKO_REV=$(jq -r '.nodes.disko.locked.rev' "$FLAKE_DIR/flake.lock")
-echo "[ok] disko revision: $DISKO_REV"
-
-sudo nix run "github:nix-community/disko/$DISKO_REV" -- \
+sudo nix run \
+  --extra-experimental-features "nix-command flakes" \
+  "github:nix-community/disko/$DISKO_REV" -- \
   --mode disko \
   --flake "$WORKDIR#$HOST"
+
 echo "[ok] /mnt mounted"
 
-# ── 7. nixos-install ──────────────────────────────────────────────────────────
+# ── 8. nixos-install ──────────────────────────────────────────────────────────
 echo ""
 echo "[..] nixos-install"
+
 sudo nixos-install \
   --no-root-passwd \
   --flake "$WORKDIR#$HOST"
