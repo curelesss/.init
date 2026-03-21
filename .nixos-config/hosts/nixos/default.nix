@@ -29,9 +29,7 @@
     enable        = true;
     device        = config.myConfig.diskDevice;
     efiSupport    = false;
-    efiInstallAsRemovable = false;
     useOSProber   = false;
-    mirroredBoots = lib.mkForce [];
   };
 
   # Explicitly disable systemd-boot so nothing conflicts with GRUB
