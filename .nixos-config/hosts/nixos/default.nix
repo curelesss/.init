@@ -88,7 +88,7 @@
     isNormalUser    = true;
     extraGroups     = [ "wheel" "networkmanager" "audio" "video" ];
     initialPassword = "111111";     # change on first login with: passwd
-    shell           = pkgs.zsh;      # or pkgs.zsh / pkgs.fish
+    shell           = pkgs.bash;      # or pkgs.zsh / pkgs.fish
   };
 
   security.sudo.wheelNeedsPassword = true;
