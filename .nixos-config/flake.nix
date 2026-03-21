@@ -1,36 +1,45 @@
 {
-  description = "My first flake!";
+  description = "My NixOS Flake";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
-    thorium.url = "github:Rishabh5321/thorium_flake";
-
-    # use the following for unstable:
-    # nixpkgs.url = "nixpkgs/nixos-unstable";
-
-    # or any branch you want:
-    # nixpkgs.url = "nixpkgs/{BRANCH-NAME}";
-  };
-
-  outputs = { self, nixpkgs, thorium, ... }:
-    let
-      lib = nixpkgs.lib;
-    in {
-      nixosConfigurations = {
-        beelink = lib.nixosSystem {
-          specialArgs = { inherit thorium; };
-          system = "x86_64-linux";
-          modules = [
-            ./hosts/beelink/configuration.nix
-          ];
-      };
-        nixos = lib.nixosSystem {
-          specialArgs = { inherit thorium; };
-          system = "x86_64-linux";
-          modules = [
-            ./hosts/nixos/configuration.nix
-          ];
-      };
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
+
+  outputs = { self, nixpkgs, disko, ... }: {
+    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        disko.nixosModules.disko
+        ./hosts/nixos/disko.nix
+        ./hosts/nixos/default.nix
+        ./modules/common/packages.nix
+      ];
+    };
+  };
+
+  # outputs = { self, nixpkgs, disko, ... }:
+  #   let
+  #     lib = nixpkgs.lib;
+  #   in {
+  #     nixosConfigurations = {
+  #       beelink = lib.nixosSystem {
+  #         specialArgs = { inherit thorium; };
+  #         system = "x86_64-linux";
+  #         modules = [
+  #           ./hosts/beelink/configuration.nix
+  #         ];
+  #     };
+  #       nixos = lib.nixosSystem {
+  #         specialArgs = { inherit thorium; };
+  #         system = "x86_64-linux";
+  #         modules = [
+  #           ./hosts/nixos/configuration.nix
+  #         ];
+  #     };
+  #   };
+  # };
 }

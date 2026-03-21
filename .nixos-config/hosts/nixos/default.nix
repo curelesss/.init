@@ -1,42 +1,30 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config, pkgs, myAppList, ... }:
+# { config, pkgs, myAppList, ... }:
+{ pkgs, ... }:
 
 {
-  imports = [
-
-      # Desktop Env
-      ../../optional/gnome.nix    # enable Gnome Env
-      # ../../optional/hyprland.nix
-      # ../../optional/hyprland_2.nix
-    
-      ../../service/keyd.nix      # hotkey daemon
-      ../../common/fonts.nix	  # Chinese / Nerd fonts
-      ../../common/packages.nix   # package list
-      ../../common/im.nix         # input method - rime-ice
-      ../../common/zsh.nix	  # set zsh as default shell
-      ../../common/thorium.nix
-
-      # Optional
-      ../../optional/krusader.nix    # enable Gnome Env
-      ../../optional/synology-drive-client.nix    # Manually provide 'deb' file download url, and sha265 required
-      ../../optional/wireguard.nix
-      ../../optional/emacs.nix
-
-      # 
-      ./hardware-configuration.nix
-    ];
-
-  # Bootloader.
-  # boot.loader.systemd-boot.enable = true;
-  # boot.loader.efi.canTouchEfiVariables = true;
-
-  boot.loader.systemd-boot.enable = false;
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
-  boot.loader.efi.canTouchEfiVariables = false;
+  # imports = [
+  #
+  #     # Desktop Env
+  #     ../../optional/gnome.nix    # enable Gnome Env
+  #     # ../../optional/hyprland.nix
+  #     # ../../optional/hyprland_2.nix
+  #   
+  #     ../../service/keyd.nix      # hotkey daemon
+  #     ../../common/fonts.nix	  # Chinese / Nerd fonts
+  #     ../../common/packages.nix   # package list
+  #     ../../common/im.nix         # input method - rime-ice
+  #     ../../common/zsh.nix	  # set zsh as default shell
+  #     ../../common/thorium.nix
+  #
+  #     # Optional
+  #     ../../optional/krusader.nix    # enable Gnome Env
+  #     ../../optional/synology-drive-client.nix    # Manually provide 'deb' file download url, and sha265 required
+  #     ../../optional/wireguard.nix
+  #     ../../optional/emacs.nix
+  #
+  #     # 
+  #     ./hardware-configuration.nix
+  #   ];
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -50,6 +38,31 @@
   # using iwd as networkmanager's WIFI backend (keeps using NetworkManager)
   # for impala to work
   networking.networkmanager.wifi.backend = "iwd";
+
+  # Bootloader.
+  # boot.loader.systemd-boot.enable = true;
+  # boot.loader.efi.canTouchEfiVariables = true;
+
+  # boot.loader.systemd-boot.enable = false;
+  # boot.loader.grub.enable = true;
+  # boot.loader.grub.device = "/dev/sda";
+  # boot.loader.efi.canTouchEfiVariables = false;
+
+  # ── Bootloader: GRUB ────────────────────────────────────────────────────────
+  boot.loader.grub = {
+    enable   = true;
+    device   = "nodev";           # "nodev" = UEFI mode (installs to ESP)
+    efiSupport = true;
+    useOSProber = true;           # detects other OSes (dual boot)
+  };
+  boot.loader.efi = {
+    canTouchEfiVariables = true;
+    efiSysMountPoint     = "/boot/efi";   # matches disko.nix mountpoint
+  };
+
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  services.fstrim.enable = true;
 
   # Set your time zone.
   time.timeZone = "Asia/Shanghai";
@@ -68,6 +81,17 @@
     LC_TELEPHONE = "zh_CN.UTF-8";
     LC_TIME = "zh_CN.UTF-8";
   };
+
+  
+  # ── User ────────────────────────────────────────────────────────────────────
+  users.users.fdong = {               # ← change username
+    isNormalUser    = true;
+    extraGroups     = [ "wheel" "networkmanager" "audio" "video" ];
+    initialPassword = "111111";     # change on first login with: passwd
+    shell           = pkgs.zsh;      # or pkgs.zsh / pkgs.fish
+  };
+
+  security.sudo.wheelNeedsPassword = true;
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -101,13 +125,6 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.fdong = {
-    isNormalUser = true;
-    description = "fdong";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = myAppList;
-  };
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -117,6 +134,7 @@
 
   # enable 'Flake'
   nix.settings.experimental-features = ["nix-command" "flakes"];
+  nix.settings.auto-optimise-store   = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
