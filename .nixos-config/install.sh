@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Print each command before executing so we see exactly where it fails
-set -x
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FLAKE_DIR="$SCRIPT_DIR"
 
-set +x
 echo ""
 echo "╔══════════════════════════════════════╗"
 echo "║       NixOS Flake Installer          ║"
@@ -48,7 +44,6 @@ read -rp "  Type YES to continue: " confirm
 [[ "$confirm" != "YES" ]] && { echo "Aborted."; exit 1; }
 
 # ── 4. Enable flakes ───────────────────────────────────────────────────────────
-set -x
 mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" \
   >> ~/.config/nix/nix.conf
@@ -58,65 +53,63 @@ echo "experimental-features = nix-command flakes" \
   | sudo tee /root/.config/nix/nix.conf > /dev/null
 
 export NIX_CONFIG="experimental-features = nix-command flakes"
-set +x
 echo "[ok] flakes enabled (user + root)"
 
-# ── 5. Wrapper flake ───────────────────────────────────────────────────────────
+# ── 5. Write the disk device into disko.nix directly ──────────────────────────
+# Instead of a wrapper flake (which causes narHash assertion errors in
+# nixos-install), we patch the actual disko.nix default value in a temp copy
+# of the whole flake, so there is only ONE flake with ONE consistent lock.
+
 WORKDIR=$(mktemp -d /tmp/nixos-install-XXXXXX)
 trap 'rm -rf "$WORKDIR"' EXIT
 
-cat > "$WORKDIR/flake.nix" <<EOF
-{
-  inputs.nixos-config.url = "path:$FLAKE_DIR";
+echo "[..] copying flake to $WORKDIR"
 
-  outputs = { self, nixos-config, ... }: {
-    nixosConfigurations.$HOST =
-      nixos-config.nixosConfigurations.$HOST.extendModules {
-        modules = [ { myConfig.diskDevice = "$DISK"; } ];
-      };
-  };
-}
-EOF
+# Copy the entire flake directory
+cp -r "$FLAKE_DIR/." "$WORKDIR/"
 
-cp "$FLAKE_DIR/flake.lock" "$WORKDIR/flake.lock"
-echo "[ok] wrapper flake written to $WORKDIR"
+# Replace the default disk device value in the copied disko.nix
+DISKO_FILE="$WORKDIR/hosts/$HOST/disko.nix"
 
-# ── 6. Read disko revision ─────────────────────────────────────────────────────
-echo ""
-echo "[..] reading disko revision from flake.lock"
-
-# Print the raw lock content around disko for debugging
-echo "--- flake.lock disko section ---"
-grep -A10 '"disko"' "$FLAKE_DIR/flake.lock" || echo "(disko not found in lock)"
-echo "--- end ---"
-
-# Try multiple patterns to be robust against lock format variations
-DISKO_REV=""
-
-# Pattern 1: inside a "locked" block after "disko"
-DISKO_REV=$(awk '/"disko"/{found=1} found && /"rev"/{
-  match($0, /"rev": "([^"]+)"/, a); print a[1]; exit}' \
-  "$FLAKE_DIR/flake.lock")
-
-if [[ -z "$DISKO_REV" ]]; then
-  echo "Error: could not extract disko revision from flake.lock"
-  echo "Please paste the output above and report it."
+if [[ ! -f "$DISKO_FILE" ]]; then
+  echo "Error: $DISKO_FILE not found."
   exit 1
 fi
 
+# Inject the actual disk as the default, overriding whatever was there
+# We add an extraModule inline so the option value is forced at eval time
+cat > "$WORKDIR/disk-override.nix" <<EOF
+{ ... }: {
+  myConfig.diskDevice = "$DISK";
+}
+EOF
+
+# Patch the flake.nix in the copy to include the disk-override module
+sed -i "s|./hosts/$HOST/disko.nix|./hosts/$HOST/disko.nix\n        ./disk-override.nix|" \
+  "$WORKDIR/flake.nix"
+
+echo "[ok] disk device '$DISK' injected into flake copy"
+
+# ── 6. Read disko revision from flake.lock ────────────────────────────────────
+DISKO_REV=$(awk '/"disko"/{found=1} found && /"rev"/{
+  match($0, /"rev": "([^"]+)"/, a); print a[1]; exit}' \
+  "$WORKDIR/flake.lock")
+
+if [[ -z "$DISKO_REV" || "$DISKO_REV" == "null" ]]; then
+  echo "Error: could not read disko revision from flake.lock"
+  exit 1
+fi
 echo "[ok] disko revision: $DISKO_REV"
 
 # ── 7. Disko: partition, format, mount ────────────────────────────────────────
 echo ""
 echo "[..] disko — partitioning $DISK"
 
-set -x
 sudo nix run \
   --extra-experimental-features "nix-command flakes" \
   "github:nix-community/disko/$DISKO_REV" -- \
   --mode disko \
   --flake "$WORKDIR#$HOST"
-set +x
 
 echo "[ok] /mnt mounted"
 
@@ -124,11 +117,9 @@ echo "[ok] /mnt mounted"
 echo ""
 echo "[..] nixos-install"
 
-set -x
 sudo nixos-install \
   --no-root-passwd \
   --flake "$WORKDIR#$HOST"
-set +x
 
 echo ""
 echo "╔══════════════════════════════════════╗"
