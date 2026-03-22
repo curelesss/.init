@@ -156,6 +156,7 @@
   };
 
   nix.settings = {
+    download-buffer-size = 524288000;
     substituters = [
       "https://mirrors.ustc.edu.cn/nix-channels/store"     # 中科大
       "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"  # 清华
