@@ -3,7 +3,7 @@
   networking.hostName = "nixos-arm";
   networking.networkmanager.enable = true;
 
-  # ── Bootloader: systemd-boot UEFI (Apple Silicon / ARM) ─────────────────────
+  # ── Bootloader ───────────────────────────────────────────────────────────────
   boot.loader.systemd-boot = {
     enable             = true;
     configurationLimit = 10;
@@ -12,23 +12,17 @@
 
   # ── Kernel ───────────────────────────────────────────────────────────────────
   boot.kernelPackages = pkgs.linuxPackages_latest;
-
   boot.initrd.availableKernelModules = [
-    "xhci_pci"
-    "usb_storage"
-    "sd_mod"
-    "sr_mod"
-    "virtio_pci"
-    "virtio_blk"
-    "virtio_net"
+    "xhci_pci" "usb_storage" "sd_mod" "sr_mod"
+    "virtio_pci" "virtio_blk" "virtio_net"
   ];
 
-  # ── VMware guest tools ───────────────────────────────────────────────────────
+  # ── VMware ───────────────────────────────────────────────────────────────────
   virtualisation.vmware.guest.enable = true;
   services.fstrim.enable             = true;
 
-  # ── Locale and time ──────────────────────────────────────────────────────────
-  time.timeZone    = "Asia/Shanghai";
+  # ── Locale ───────────────────────────────────────────────────────────────────
+  time.timeZone      = "Asia/Shanghai";
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
     LC_ADDRESS        = "zh_CN.UTF-8";
@@ -44,14 +38,11 @@
 
   # ── Display ──────────────────────────────────────────────────────────────────
   services.xserver.enable = true;
-  services.xserver.xkb = {
-    layout  = "us";
-    variant = "";
-  };
+  services.xserver.xkb = { layout = "us"; variant = ""; };
 
-  # ── Desktop ──────────────────────────────────────────────────────────────────
-  services.xserver.displayManager.gdm.enable   = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  # ── Desktop — updated option paths for nixos-unstable ────────────────────────
+  services.displayManager.gdm.enable    = true;   # was services.xserver.displayManager.gdm
+  services.desktopManager.gnome.enable  = true;   # was services.xserver.desktopManager.gnome
 
   # ── Sound ────────────────────────────────────────────────────────────────────
   services.pulseaudio.enable = false;
@@ -59,11 +50,10 @@
   services.pipewire = {
     enable            = true;
     alsa.enable       = true;
-    alsa.support32Bit = false;    # no 32-bit compat on aarch64
+    alsa.support32Bit = false;
     pulse.enable      = true;
   };
 
-  # ── Printing ─────────────────────────────────────────────────────────────────
   services.printing.enable = true;
 
   # ── User ─────────────────────────────────────────────────────────────────────
@@ -85,9 +75,7 @@
     settings.PasswordAuthentication = true;
   };
 
-  # ── Prevent VMware display freeze on idle ────────────────────────────────────
-
-  # Disable OS-level suspend — VMware manages power at the hypervisor level
+  # ── Prevent VMware display freeze — updated option paths ─────────────────────
   systemd.sleep.settings.Sleep = {
     AllowSuspend              = "no";
     AllowHibernation          = "no";
@@ -95,8 +83,6 @@
     AllowHybridSleep          = "no";
   };
 
-  # Disable X11 screen blanking and DPMS so the VMware SVGA driver does not
-  # lose its display state when the screen would otherwise blank
   services.xserver.serverFlagsSection = ''
     Option "BlankTime"   "0"
     Option "StandbyTime" "0"
@@ -104,17 +90,14 @@
     Option "OffTime"     "0"
   '';
 
-  # Disable logind idle action so the session never auto-locks from inactivity
-  services.logind = {
-    lidSwitch              = "ignore";
-    lidSwitchExternalPower = "ignore";
-    settings.Login = {
-      IdleAction    = "ignore";
-      IdleActionSec = "0";
-    };
+  services.logind.settings.Login = {
+    HandleLidSwitch             = "ignore";   # was lidSwitch
+    HandleLidSwitchExternalPower = "ignore";  # was lidSwitchExternalPower
+    IdleAction                  = "ignore";
+    IdleActionSec               = "0";
   };
 
-  # ── Nix settings ─────────────────────────────────────────────────────────────
+  # ── Nix ──────────────────────────────────────────────────────────────────────
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
     auto-optimise-store   = true;
@@ -128,9 +111,8 @@
     ];
   };
 
-  # ── Misc ─────────────────────────────────────────────────────────────────────
-  programs.firefox.enable    = true;
-  nixpkgs.config.allowUnfree = true;
+  programs.firefox.enable     = true;
+  nixpkgs.config.allowUnfree  = true;
   programs.gnupg.agent.enable = true;
 
   system.stateVersion = "24.11";
