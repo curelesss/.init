@@ -23,25 +23,4 @@
     };
   };
 
-  # outputs = { self, nixpkgs, disko, ... }:
-  #   let
-  #     lib = nixpkgs.lib;
-  #   in {
-  #     nixosConfigurations = {
-  #       beelink = lib.nixosSystem {
-  #         specialArgs = { inherit thorium; };
-  #         system = "x86_64-linux";
-  #         modules = [
-  #           ./hosts/beelink/configuration.nix
-  #         ];
-  #     };
-  #       nixos = lib.nixosSystem {
-  #         specialArgs = { inherit thorium; };
-  #         system = "x86_64-linux";
-  #         modules = [
-  #           ./hosts/nixos/configuration.nix
-  #         ];
-  #     };
-  #   };
-  # };
 }
