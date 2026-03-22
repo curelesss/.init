@@ -20,7 +20,7 @@
           disko.nixosModules.disko
           ./hosts/nixos/disko.nix
           ./hosts/nixos/default.nix
-          ./modules/common/packages.nix
+          ./modules/common/sys-packages.nix
           ./modules/common/user-packages.nix
         ];
       };
@@ -32,7 +32,7 @@
           disko.nixosModules.disko
           ./hosts/nixos-arm/disko.nix
           ./hosts/nixos-arm/default.nix
-          ./modules/common/packages.nix
+          ./modules/common/sys-packages.nix
           ./modules/common/user-packages.nix
         ];
       };
