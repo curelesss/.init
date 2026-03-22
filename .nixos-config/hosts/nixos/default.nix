@@ -67,18 +67,15 @@
 
   security.sudo.wheelNeedsPassword = true;
 
-  # Enable the X11 windowing system.
+  # ── Display ──────────────────────────────────────────────────────────────────
   services.xserver.enable = true;
+  services.xserver.videoDrivers = [ "vmware" ];
+  services.xserver.xkb = { layout = "us"; variant = ""; };
 
-  # Display manager — needed to actually start a session
-  services.displayManager.gdm.enable = true;   # or lightdm
+  # ── Desktop — correct option paths for nixos-unstable ────────────────────────
+  services.displayManager.gdm.enable   = true;   # not services.xserver.displayManager
+  services.desktopManager.gnome.enable = true;   # not services.xserver.desktopManager
 
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
