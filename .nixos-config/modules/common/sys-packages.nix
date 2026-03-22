@@ -10,7 +10,6 @@
     gnupg	  # gnupg key
     pass	  # password-store
     stow
-    gtkmm3  # fix clipboard between host and vm
   ];
 
 

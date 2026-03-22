@@ -12,7 +12,8 @@
   environment.systemPackages = with pkgs; [
     gnome-tweaks
     dconf-editor              # The "Registry Editor" for GNOME settings
-    gnomeExtensions.kimpanel   # The IM panel for Fcitx5
+    gnomeExtensions.kimpanel  # The IM panel for Fcitx5
+    gtkmm3                    # fix copy/paste between host and vm
   ];
 
   # 3. Enable Browser Connector
