@@ -22,6 +22,7 @@
           ./hosts/nixos/default.nix
           ./modules/common/sys-packages.nix
           ./modules/common/user-packages.nix
+          ./modules/optional/gnome.nix
         ];
       };
 
