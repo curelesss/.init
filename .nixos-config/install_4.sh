@@ -83,14 +83,27 @@ ok "Architecture detected → ${BOLD}$ARCH_LABEL${RESET}"
 step "Collect installation parameters"
 # ══════════════════════════════════════════════════════════════════════════════
 
+# # ── Hostname ───────────────────────────────────────────────────────────────────
+# label "Hostname"
+# echo -e "  ${DIM}Hosts defined in this flake:${RESET}"
+# grep 'nixosConfigurations\.' "$FLAKE_DIR/flake.nix" \
+#   | grep -oP '(?<=nixosConfigurations\.)\w+' \
+#   | while IFS= read -r h; do
+#       echo -e "  ${CYAN}  •${RESET} ${DIM}$h${RESET}"
+#     done
+# echo ""
+
 # ── Hostname ───────────────────────────────────────────────────────────────────
 label "Hostname"
 echo -e "  ${DIM}Hosts defined in this flake:${RESET}"
+
+# Use || true to prevent grep/pipeline failure from triggering set -e exit
 grep 'nixosConfigurations\.' "$FLAKE_DIR/flake.nix" \
   | grep -oP '(?<=nixosConfigurations\.)\w+' \
   | while IFS= read -r h; do
       echo -e "  ${CYAN}  •${RESET} ${DIM}$h${RESET}"
-    done
+    done || true
+
 echo ""
 
 # Suggest default based on arch
