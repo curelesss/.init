@@ -3,41 +3,32 @@
   networking.hostName = "nixos-arm";
   networking.networkmanager.enable = true;
 
-  # programs.zsh.enable = true;
-
-  # ── Bootloader: systemd-boot for UEFI on ARM ────────────────────────────────
-  # VMware Fusion on Apple Silicon uses UEFI exclusively — no legacy BIOS.
-  # systemd-boot is simpler and more reliable than GRUB EFI on aarch64.
+  # ── Bootloader: systemd-boot UEFI (Apple Silicon / ARM) ─────────────────────
   boot.loader.systemd-boot = {
-    enable       = true;
-    configurationLimit = 10;       # keep last 10 generations in boot menu
+    enable             = true;
+    configurationLimit = 10;
   };
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # ── Kernel: use latest for best aarch64 VMware Fusion support ───────────────
+  # ── Kernel ───────────────────────────────────────────────────────────────────
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  # ── Kernel modules for VMware on ARM ────────────────────────────────────────
-  # VMware Fusion on Apple Silicon presents a slightly different virtual
-  # hardware profile than VMware on x86 — these modules cover both cases
   boot.initrd.availableKernelModules = [
-    "xhci_pci"    # USB 3.0 controller
-    "usb_storage" # USB storage devices
-    "sd_mod"      # SCSI disk driver
-    "sr_mod"      # SCSI CD-ROM driver
-    "virtio_pci"  # VirtIO PCI bus (used by Fusion on ARM)
-    "virtio_blk"  # VirtIO block device
-    "virtio_net"  # VirtIO network
+    "xhci_pci"
+    "usb_storage"
+    "sd_mod"
+    "sr_mod"
+    "virtio_pci"
+    "virtio_blk"
+    "virtio_net"
   ];
 
   # ── VMware guest tools ───────────────────────────────────────────────────────
   virtualisation.vmware.guest.enable = true;
-
-  # SSD/virtual disk trim
-  services.fstrim.enable = true;
+  services.fstrim.enable             = true;
 
   # ── Locale and time ──────────────────────────────────────────────────────────
-  time.timeZone = "Asia/Shanghai";
+  time.timeZone    = "Asia/Shanghai";
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
     LC_ADDRESS        = "zh_CN.UTF-8";
@@ -53,16 +44,13 @@
 
   # ── Display ──────────────────────────────────────────────────────────────────
   services.xserver.enable = true;
-
   services.xserver.xkb = {
     layout  = "us";
     variant = "";
   };
 
-  # ── Desktop environment ──────────────────────────────────────────────────────
-  # Use the same desktop as the x86 host — defined in your gnome/hyprland modules
-  # Uncomment whichever you use:
-  services.xserver.displayManager.gdm.enable  = true;
+  # ── Desktop ──────────────────────────────────────────────────────────────────
+  services.xserver.displayManager.gdm.enable   = true;
   services.xserver.desktopManager.gnome.enable = true;
 
   # ── Sound ────────────────────────────────────────────────────────────────────
@@ -71,7 +59,7 @@
   services.pipewire = {
     enable            = true;
     alsa.enable       = true;
-    alsa.support32Bit = false;   # no 32-bit on ARM
+    alsa.support32Bit = false;    # no 32-bit compat on aarch64
     pulse.enable      = true;
   };
 
@@ -84,7 +72,7 @@
     isNormalUser       = true;
     extraGroups        = [ "wheel" "networkmanager" "audio" "video" ];
     hashedPasswordFile = "/etc/nixos/fdong.hash";
-    shell              = pkgs.zsh;
+    shell              = pkgs.bash;
     home               = "/home/fdong";
     createHome         = true;
   };
@@ -93,8 +81,37 @@
 
   # ── SSH ──────────────────────────────────────────────────────────────────────
   services.openssh = {
-    enable                        = true;
+    enable                          = true;
     settings.PasswordAuthentication = true;
+  };
+
+  # ── Prevent VMware display freeze on idle ────────────────────────────────────
+
+  # Disable OS-level suspend — VMware manages power at the hypervisor level
+  systemd.sleep.settings.Sleep = {
+    AllowSuspend              = "no";
+    AllowHibernation          = "no";
+    AllowSuspendThenHibernate = "no";
+    AllowHybridSleep          = "no";
+  };
+
+  # Disable X11 screen blanking and DPMS so the VMware SVGA driver does not
+  # lose its display state when the screen would otherwise blank
+  services.xserver.serverFlagsSection = ''
+    Option "BlankTime"   "0"
+    Option "StandbyTime" "0"
+    Option "SuspendTime" "0"
+    Option "OffTime"     "0"
+  '';
+
+  # Disable logind idle action so the session never auto-locks from inactivity
+  services.logind = {
+    lidSwitch              = "ignore";
+    lidSwitchExternalPower = "ignore";
+    settings.Login = {
+      IdleAction    = "ignore";
+      IdleActionSec = "0";
+    };
   };
 
   # ── Nix settings ─────────────────────────────────────────────────────────────
@@ -111,34 +128,9 @@
     ];
   };
 
-  # ── Prevent VMware display freeze on idle ────────────────────────────────────
-  systemd.sleep.extraConfig = ''
-    AllowSuspend=no
-    AllowHibernation=no
-    AllowSuspendThenHibernate=no
-    AllowHybridSleep=no
-  '';
-
-  services.xserver.serverFlagsSection = ''
-    Option "BlankTime"   "0"
-    Option "StandbyTime" "0"
-    Option "SuspendTime" "0"
-    Option "OffTime"     "0"
-  '';
-
-  services.logind = {
-    lidSwitch              = "ignore";
-    lidSwitchExternalPower = "ignore";
-    extraConfig            = ''
-      IdleAction=ignore
-      IdleActionSec=0
-    '';
-  };
-
   # ── Misc ─────────────────────────────────────────────────────────────────────
   programs.firefox.enable    = true;
   nixpkgs.config.allowUnfree = true;
-
   programs.gnupg.agent.enable = true;
 
   system.stateVersion = "24.11";
