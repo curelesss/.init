@@ -160,13 +160,43 @@
 
   nix.settings = {
     substituters = [
-      "https://mirrors.ustc.edu.cn/nix-channels/store"     # 中科大（可优先）
+      "https://mirrors.ustc.edu.cn/nix-channels/store"     # 中科大
       "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"  # 清华
       "https://cache.nixos.org/"
     ];
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
     ];
+  };
+
+  # ── Prevent VMware VM display freeze on idle ──────────────────────────────────
+
+  # Disable OS-level suspend — VMware manages power at hypervisor level
+  systemd.sleep.extraConfig = ''
+  AllowSuspend=no
+  AllowHibernation=no
+  AllowSuspendThenHibernate=no
+  AllowHybridSleep=no
+  '';
+
+  # Disable X11 screen blanking and DPMS power saving
+  # Without this the VMware SVGA driver loses display state on blank
+  services.xserver.serverFlagsSection = ''
+  Option "BlankTime"   "0"
+  Option "StandbyTime" "0"
+  Option "SuspendTime" "0"
+  Option "OffTime"     "0"
+  '';
+
+  # Disable the systemd-logind idle action so the session never
+  # auto-locks or suspends from inactivity
+  services.logind = {
+    lidSwitch             = "ignore";
+    lidSwitchExternalPower = "ignore";
+    extraConfig = ''
+    IdleAction=ignore
+    IdleActionSec=0
+    '';
   };
 
 }
