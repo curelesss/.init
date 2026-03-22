@@ -1,6 +1,13 @@
 { pkgs, lib, ... }:
 
 {
+  
+  # Enabling GDM requires xserver to be on — set it here so default.nix
+  # stays display-agnostic and this module is fully self-contained
+  services.xserver.enable       = true;
+  services.xserver.videoDrivers = [ "vmware" ];
+  services.xserver.xkb          = { layout = "us"; variant = ""; };
+
   # 1. Enable GNOME and GDM
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;

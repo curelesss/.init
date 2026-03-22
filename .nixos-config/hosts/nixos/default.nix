@@ -2,27 +2,8 @@
 
 {
   networking.hostName = "nixos"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
   networking.networkmanager.enable = true;
-  # using iwd as networkmanager's WIFI backend (keeps using NetworkManager)
-  # for impala to work
   networking.networkmanager.wifi.backend = "iwd";
-
-  # Bootloader.
-  # boot.loader.systemd-boot.enable = true;
-  # boot.loader.efi.canTouchEfiVariables = true;
-
-  # boot.loader.systemd-boot.enable = false;
-  # boot.loader.grub.enable = true;
-  # boot.loader.grub.device = "/dev/sda";
-  # boot.loader.efi.canTouchEfiVariables = false;
-
 
   # ── Bootloader: GRUB BIOS/legacy mode only ──────────────────────────────────
   boot.loader.grub = {
@@ -68,9 +49,10 @@
   security.sudo.wheelNeedsPassword = true;
 
   # ── Display ──────────────────────────────────────────────────────────────────
-  services.xserver.enable = true;
-  services.xserver.videoDrivers = [ "vmware" ];
-  services.xserver.xkb = { layout = "us"; variant = ""; };
+  services.xserver.enable = false;
+  # services.xserver.enable = true;
+  # services.xserver.videoDrivers = [ "vmware" ];
+  # services.xserver.xkb = { layout = "us"; variant = ""; };
 
   # ── Desktop — correct option paths for nixos-unstable ────────────────────────
   # services.displayManager.gdm.enable   = true;   # not services.xserver.displayManager
@@ -166,35 +148,5 @@
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
     ];
   };
-
-  # # ── Prevent VMware VM display freeze on idle ──────────────────────────────────
-  #
-  # # Disable OS-level suspend — VMware manages power at hypervisor level
-  # systemd.sleep.extraConfig = ''
-  # AllowSuspend=no
-  # AllowHibernation=no
-  # AllowSuspendThenHibernate=no
-  # AllowHybridSleep=no
-  # '';
-  #
-  # # Disable X11 screen blanking and DPMS power saving
-  # # Without this the VMware SVGA driver loses display state on blank
-  # services.xserver.serverFlagsSection = ''
-  # Option "BlankTime"   "0"
-  # Option "StandbyTime" "0"
-  # Option "SuspendTime" "0"
-  # Option "OffTime"     "0"
-  # '';
-  #
-  # # Disable the systemd-logind idle action so the session never
-  # # auto-locks or suspends from inactivity
-  # services.logind = {
-  #   lidSwitch             = "ignore";
-  #   lidSwitchExternalPower = "ignore";
-  #   extraConfig = ''
-  #   IdleAction=ignore
-  #   IdleActionSec=0
-  #   '';
-  # };
 
 }
