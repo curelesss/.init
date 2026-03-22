@@ -4,7 +4,7 @@
   
   # Enabling GDM requires xserver to be on — set it here so default.nix
   # stays display-agnostic and this module is fully self-contained
-  services.xserver.enable       = true;
+  services.xserver.enable       = lib.mkForce true;
   services.xserver.videoDrivers = [ "vmware" ];
   services.xserver.xkb          = { layout = "us"; variant = ""; };
 
