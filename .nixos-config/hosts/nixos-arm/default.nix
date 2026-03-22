@@ -37,12 +37,12 @@
   };
 
   # ── Display ──────────────────────────────────────────────────────────────────
-  services.xserver.enable = true;
-  services.xserver.xkb = { layout = "us"; variant = ""; };
+  services.xserver.enable = false;
+  # services.xserver.xkb = { layout = "us"; variant = ""; };
 
   # ── Desktop — updated option paths for nixos-unstable ────────────────────────
-  services.displayManager.gdm.enable    = true;   # was services.xserver.displayManager.gdm
-  services.desktopManager.gnome.enable  = true;   # was services.xserver.desktopManager.gnome
+  # services.displayManager.gdm.enable    = true;   # was services.xserver.displayManager.gdm
+  # services.desktopManager.gnome.enable  = true;   # was services.xserver.desktopManager.gnome
 
   # ── Sound ────────────────────────────────────────────────────────────────────
   services.pulseaudio.enable = false;
