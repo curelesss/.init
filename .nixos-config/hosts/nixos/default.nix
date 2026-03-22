@@ -73,8 +73,8 @@
   services.xserver.xkb = { layout = "us"; variant = ""; };
 
   # ── Desktop — correct option paths for nixos-unstable ────────────────────────
-  services.displayManager.gdm.enable   = true;   # not services.xserver.displayManager
-  services.desktopManager.gnome.enable = true;   # not services.xserver.desktopManager
+  # services.displayManager.gdm.enable   = true;   # not services.xserver.displayManager
+  # services.desktopManager.gnome.enable = true;   # not services.xserver.desktopManager
 
 
   # Enable CUPS to print documents.
