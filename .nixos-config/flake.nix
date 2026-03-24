@@ -25,7 +25,10 @@
           ./modules/common/user-tilling-packages.nix
           ./modules/common/user-gui-packages.nix
           ./modules/common/fonts.nix
+          ./modules/common/zsh.nix
+          ./modules/common/im.nix
           ./modules/optional/gnome.nix
+          ./modules/service/keyd.nix
         ];
       };
 
