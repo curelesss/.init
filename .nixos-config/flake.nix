@@ -28,6 +28,7 @@
           ./modules/common/zsh.nix
           ./modules/common/im.nix
           ./modules/optional/gnome.nix
+          ./modules/optional/niri.nix
           ./modules/service/keyd.nix
         ];
       };

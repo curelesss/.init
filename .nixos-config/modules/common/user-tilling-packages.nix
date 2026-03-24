@@ -14,9 +14,13 @@
 
     # --- Wallpaper ---
     swww
+    swaybg
 
     # --- Notification Center ---
     swaynotificationcenter
+    mako
+
+    # --- OSD ---
     swayosd
 
     # --- Brightness ---
@@ -31,6 +35,15 @@
 
     # --- WIFI ---
     bluetui		# TUI Bluetooth manager
+
+    # --- Screen Lock ---
+    swaylock
+
+    # --- idle management ---
+    swayidle
+
+    # --- XWayland support ---
+    xwayland-satellite
   ];
 
 }
