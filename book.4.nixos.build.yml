@@ -12,7 +12,6 @@
       - kitty
       - matugen
       - neovim
-      - nixos-config
       - swayosd
       - wallpaper
       - waybar
@@ -27,17 +26,17 @@
         creates: "{{ ansible_env.HOME }}/.{{ item }}"
       loop: "{{ stow_dirs }}"
 
-    - name: Get hostname
-      ansible.builtin.command: hostname
-      register: current_hostname
-
-    - name: Delete existing hardware-configuration.nix
-      ansible.builtin.file:
-        path: "{{ ansible_env.HOME }}/.nixos-config/hosts/{{ current_hostname.stdout }}/hardware-configuration.nix"
-        state: absent
-
-    - name: Copy hardware-configuration.nix to nixos-config host directory
-      ansible.builtin.copy:
-        src: /etc/nixos/hardware-configuration.nix
-        dest: "{{ ansible_env.HOME }}/.nixos-config/hosts/{{ current_hostname.stdout }}/hardware-configuration.nix"
-        remote_src: true
+    # - name: Get hostname
+    #   ansible.builtin.command: hostname
+    #   register: current_hostname
+    #
+    # - name: Delete existing hardware-configuration.nix
+    #   ansible.builtin.file:
+    #     path: "{{ ansible_env.HOME }}/.nixos-config/hosts/{{ current_hostname.stdout }}/hardware-configuration.nix"
+    #     state: absent
+    #
+    # - name: Copy hardware-configuration.nix to nixos-config host directory
+    #   ansible.builtin.copy:
+    #     src: /etc/nixos/hardware-configuration.nix
+    #     dest: "{{ ansible_env.HOME }}/.nixos-config/hosts/{{ current_hostname.stdout }}/hardware-configuration.nix"
+    #     remote_src: true
