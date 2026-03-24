@@ -21,7 +21,10 @@
           ./hosts/nixos/disko.nix
           ./hosts/nixos/default.nix
           ./modules/common/sys-packages.nix
-          ./modules/common/user-packages.nix
+          ./modules/common/user-shell-packages.nix
+          ./modules/common/user-tilling-packages.nix
+          ./modules/common/user-gui-packages.nix
+          ./modules/common/fonts.nix
           ./modules/optional/gnome.nix
         ];
       };
