@@ -8,6 +8,7 @@
     stow_dirs:
       - foot
       - hyprland
+      - niri
       - keyd
       - kitty
       - matugen
