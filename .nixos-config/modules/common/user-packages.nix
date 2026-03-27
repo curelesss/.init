@@ -11,6 +11,7 @@
     wezterm
     foot
     alacritty
+    ghostty
 
     # --- CLI Search ---
     fd

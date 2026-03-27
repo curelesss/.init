@@ -14,5 +14,6 @@
   environment.systemPackages = with pkgs; [
     alacritty    # Super+T terminal
     fuzzel       # Super+D launcher
+    pkgs.noctalia-shell
   ];
 }
