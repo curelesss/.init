@@ -65,6 +65,7 @@
     shell              = pkgs.bash;
     home               = "/home/fdong";
     createHome         = true;
+    homeMode           = "755";
   };
 
   security.sudo.wheelNeedsPassword = true;
