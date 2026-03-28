@@ -50,7 +50,7 @@
           ./modules/common/im.nix
           ./modules/optional/gnome.nix
           ./modules/optional/niri.nix
-          # ./modules/optional/vmware-shares.nix
+          ./modules/optional/vmware-shares.nix
           ./modules/service/keyd.nix
         ];
       };
