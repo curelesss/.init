@@ -29,6 +29,7 @@
           ./modules/common/im.nix
           ./modules/optional/gnome.nix
           ./modules/optional/niri.nix
+          ./modules/optional/vmware-shares.nix
           ./modules/service/keyd.nix
         ];
       };
@@ -41,7 +42,16 @@
           ./hosts/nixos-arm/disko.nix
           ./hosts/nixos-arm/default.nix
           ./modules/common/sys-packages.nix
-          ./modules/common/user-packages.nix
+          ./modules/common/user-shell-packages.nix
+          ./modules/common/user-tilling-packages.nix
+          ./modules/common/user-gui-packages.nix
+          ./modules/common/fonts.nix
+          ./modules/common/zsh.nix
+          ./modules/common/im.nix
+          ./modules/optional/gnome.nix
+          ./modules/optional/niri.nix
+          # ./modules/optional/vmware-shares.nix
+          ./modules/service/keyd.nix
         ];
       };
 
