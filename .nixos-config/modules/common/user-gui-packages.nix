@@ -9,6 +9,8 @@
     brave
     firefox
 
+    # --- Browser ---
+    mpv
   ];
 
 }

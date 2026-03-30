@@ -31,6 +31,7 @@
           ./modules/optional/niri.nix
           ./modules/optional/vmware-shares.nix
           ./modules/service/keyd.nix
+          ./modules/common/mime-apps.nix
         ];
       };
 
