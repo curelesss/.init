@@ -1,1 +1,0 @@
-ansible-playbook book.0.2.arm.arch.group.yml -K
