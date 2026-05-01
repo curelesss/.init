@@ -157,7 +157,8 @@ fi
 NIX_CONF="experimental-features = nix-command flakes
 substituters = file:///nix/store $SUBSTITUTERS
 trusted-substituters = file:///nix/store $SUBSTITUTERS
-trusted-public-keys = $PUBKEY"
+trusted-public-keys = $PUBKEY
+show-trace = true"
 
 # ══════════════════════════════════════════════════════════════════════════════
 step "Confirm — point of no return"
@@ -341,7 +342,25 @@ echo ""
 
 sudo nixos-install \
   --no-root-passwd \
-  --flake "$WORKDIR#$HOST"
+  --flake "$WORKDIR#$HOST" \
+  -- verbose
+
+# ══════════════════════════════════════════════════════════════════════════════
+step "Cache hit report"
+# ══════════════════════════════════════════════════════════════════════════════
+
+info "Counting local cache hits from ISO store..."
+
+ISO_PATHS=$(ls /nix/store | grep -v '\.drv$' | sort)
+MNT_PATHS=$(ls /mnt/nix/store | grep -v '\.drv$' | sort)
+
+TOTAL=$(echo "$MNT_PATHS" | wc -l)
+HITS=$(comm -12 <(echo "$ISO_PATHS") <(echo "$MNT_PATHS") | wc -l)
+MISSES=$((TOTAL - HITS))
+
+ok "Total packages installed : $TOTAL"
+ok "From ISO store (local)   : $HITS"
+ok "Downloaded from network  : $MISSES"
 
 # ══════════════════════════════════════════════════════════════════════════════
 step "Installation complete"
